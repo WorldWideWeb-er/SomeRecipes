@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+<head>
+  <title>SomeRecipies.com</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+	//Randomly select which recipes to show
+	let totalRecipeCount = 3;	//Total amount of recipes on the system
+	let totalShowRecipe = 4;	//Total amount of recipes to show on screen
+	let numberArray = {};
+	for(let counter = 0; counter < totalShowRecipe; counter++){
+		let number = Math.floor(Math.random() * totalRecipeCount);
+		numberArray[counter] = number;		
+	}
+	
+	//Pulls requested information from server
+	for(let counter = 0; counter < Object.keys(numberArray).length; counter++){
+		//Gathering Recipe Data from singular recpie file
+		fetch('inc/recipe_Info/'+ numberArray[counter] + '_recipeProperties.txt')
+			.then(response => {
+				return response.json();
+			})
+			.then(recipe => {
+				currentRecipe = JSON.stringify(recipe)
+				window.localStorage.setItem("currentRecipe",currentRecipe);
+				loadAllFunctions();
+			});
+	}
+	
+	//Once the Page fully loads, runs this 'Master Function'
+	//Should contain all functions that need to run as the page loads
+	function loadAllFunctions(){
+		loadLocalStorage();
+		createRecipeCard()
+	}
+	
+	//Global Variables
+	let currentRecipe = '';
+	
+	//Pulling information from the Local Storage and saving into variable to be used elsewhere
+	function loadLocalStorage(){
+		currentRecipe = JSON.parse(window.localStorage.getItem("currentRecipe"));
+	}
+	
+	//Creating Recipe Card
+	function createRecipeCard(){
+		//Link to page
+			let cardLink = document.createElement("a");
+			let cardRecipeId = currentRecipe['id'];
+		console.log(cardRecipeId);
+			cardLink.setAttribute("href","viewRecipe.html");
+			cardLink.setAttribute("style","text-decoration: none; color: black;");
+			cardLink.setAttribute("onclick","createRecipeCardLink("+ cardRecipeId +")");
+		//Card Creation
+			let newCard = document.createElement("div");
+			newCard.setAttribute("class","card");
+			newCard.setAttribute("style","width:400px");
+		//Recipe Img
+			let recipeImg= document.createElement("img");
+			recipeImg.setAttribute("class","card-img-top");
+			recipeImg.setAttribute("src","inc/recipe_Img/" + currentRecipe['id'] + "_recipeImg.jpg");
+			recipeImg.setAttribute("alt",currentRecipe["imageInfo"]["imageAlt"]);
+			recipeImg.setAttribute("style","max-height:250px;" );
+			newCard.appendChild(recipeImg);
+		//Card Body
+		let cardBody = document.createElement("div");
+		cardBody.setAttribute("class","card-body");
+		cardBody.setAttribute("style","height:250px");
+			//Recipe Title
+			let cardH4 = document.createElement("h4");
+			cardH4.setAttribute("class","card-title");
+			cardH4.innerHTML = currentRecipe['name'];
+			cardBody.appendChild(cardH4);
+			//Recipe Rating
+			let cardRating = document.createElement("p");
+			cardRating.setAttribute("class","card-text");
+			cardRating.setAttribute("style","filter: invert(31%) sepia(97%) saturate(1093%) hue-rotate(347deg) brightness(90%) contrast(103%)")
+			cardRating.innerHTML = createRating();
+			cardBody.appendChild(cardRating);
+			//Recipe Overview
+			let cardSummary = document.createElement("p");
+			cardSummary.setAttribute("class","card-text");
+			cardSummary.innerHTML = currentRecipe['summary'].substring(0,120)+ "...";
+			cardBody.appendChild(cardSummary);
+			//Recipe Submitter
+			let cardSubmitter = document.createElement("p");
+			cardSubmitter.setAttribute("class","card-text");
+			cardSubmitter.innerHTML = currentRecipe['submitter'];
+			cardBody.appendChild(cardSubmitter);
+			//break
+			let cardBreak = document.createElement("br");
+		//Place all into Card body
+		newCard.appendChild(cardBody);
+		
+		cardLink.appendChild(newCard);
+		cardLink.appendChild(cardBreak);
+		//Send it
+		document.querySelector("#recipeCardInsert").appendChild(cardLink);
+	}
+	function createRating(){
+		let totalRating = '';
+		let rating = Math.floor(currentRecipe['reviewRating']);
+		if(rating !=5){
+			for(let counter = 1; counter <= rating; counter++){
+				let total = 5 - rating;
+				if(counter <= rating){
+					totalRating += '<img src="inc/icons/star-fill.svg" alt="rating">'
+				}
+				if(counter >= rating){
+					for(let counter = 1; counter <= total; counter++){
+						totalRating += '<img src="inc/icons/star.svg" alt="rating">'
+					}
+				}
+			}
+		}else{
+			for(let counter = 1; counter <= rating; counter++){
+				totalRating += '<img src="inc/icons/star-fill.svg" alt="rating">'
+			}
+		}
+		return totalRating;
+	}
+	function createRecipeCardLink($inRecipeId){
+		window.localStorage.setItem("selectedRecipe",$inRecipeId);
+	}
+	
+	
+</script>
+</head>
+
+<body>
+<div class="container-fluid p-2" style="background-color: #F2F2F2">
+</div>
+<div class="container-fluid p-5" style="background-color: #F2F2F2">
+</div>
+	
+	<!--- Navigation --->
+	<nav class="navbar navbar-expand-sm navbar-dark sticky-top" style="background-color: #FFFFFF; border-top: 1px solid #DAD8D6;">
+		<div class="container">
+			<div class="container-fluid">
+				<div class="row"  style="display: flex; align-items: baseline">
+					<div class="col-1">
+						<div style="display: flex; align-items: baseline" >
+							<img src="inc/icons/card-text.svg" alt="popUp">
+							<p style="padding: 0px 0px 0px 8px">Explore</p>
+						</div>
+					</div>
+					<div class="col" style="display: flex; align-items: baseline">
+						<div>
+							<a href="index.html" style=" text-decoration: none;"><h3 style="padding: 0px 0px 0px 12px; color: #D54215; text-decoration: none;">SomeRecipes</h3></a>
+						</div>
+					</div>
+					<div class="col-3">
+						<a href="newRecipe.php" style=" text-decoration: none;">
+						<button type="button" class="btn btn" style="background-color: #D54215; color: #ffffff" id="button" name="button" >Create New Recipe</button>
+					</a>
+					
+					</div>
+					
+				</div>
+			</div>
+		</div>
+	</nav>
+	
+	<!--- Search Header -->
+	<div class="container-fluid" style="background-color: #F5F6EA; height: 150px; border-bottom: ">
+		<div class="container">
+			<div class="row">
+				<div class="col-4 pt-3">
+					<form action="/action_page.php">
+						<div class="input-group mb-3">
+							<input type="text" class="form-control" placeholder="Search" name="search">
+							<span class="input-group-text" style="background-color: #D54215"><img src="inc/icons/search.svg" alt="searchIcon"></span>
+						</div>
+					</form>
+				
+				</div>
+				<div class="col-3 pt-3">
+				</div>
+				<div class="col-5 pt-3">
+					
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container mt-5">
+		<div class="row" >
+			<div class="col-12" id="recipeCardInsert" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+			</div>
+		</div>
+	</div>
+	
+	
+</body>
+</html>

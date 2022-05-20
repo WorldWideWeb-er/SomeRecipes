@@ -1,0 +1,273 @@
+<!doctype html>
+<html>
+<head>
+  <title>SomeRecipies.com</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>	
+	
+	<script>
+		//Receive recipe id from local storage
+		let $recipeID = window.localStorage.getItem("selectedRecipe");
+		//Fetching Specific Recpie	dictated by the localstorage item
+		fetch('inc/recipe_Info/'+ $recipeID + '_recipeProperties.txt')
+				.then(response => {
+					//console.log(response);
+					return response.json();
+				})
+				.then(recipe => {
+					currentRecipe = JSON.stringify(recipe)
+					window.localStorage.setItem("currentRecipe",currentRecipe);
+					loadAllFunctions();
+				});
+		
+		
+		
+		//Once the Page fully loads, runs this 'Master Function'
+		//Should contain all functions that need to run as the page loads
+		function loadAllFunctions(){
+			loadLocalStorage();
+			showRecipeInfo();
+			loadRecipeIngredients();
+			loadRecipeDirections()
+		}
+		
+		//Global Variables
+		let currentRecipe = '';
+		
+		//Pulling information from the Local Storage and saving into variable to be used elsewhere
+		function loadLocalStorage(){
+			let currentRecipe = window.localStorage.getItem("currentRecipe");
+		}
+		
+		//Pull info from variable and shown on page
+		function showRecipeInfo(){	
+		currentRecipe = JSON.parse(currentRecipe);
+			console.log(currentRecipe)
+		document.querySelector("#recipeName").innerHTML = currentRecipe['name'];
+		document.querySelector("#recipeDescription").innerHTML = currentRecipe['summary'];
+		document.querySelector("#recipeSubmitter").innerHTML =  "By: " + currentRecipe['submitter'];			
+		createRating()
+		document.querySelector("#servingSize").innerHTML = currentRecipe['serves'];
+		document.querySelector("#preparationTime").innerHTML = currentRecipe['preparationTime'];
+		document.querySelector("#cookingTime").innerHTML = currentRecipe['cooking'];
+		createRecipeIMG();
+		}
+		
+		function createRecipeIMG(){
+			let newImg = document.createElement("img");		//Describing what is to be made
+			newImg.setAttribute("src","inc/recipe_Img/" + $recipeID + "_recipeImg.jpg");
+			newImg.setAttribute("alt",currentRecipe["imageInfo"]["imageAlt"]);
+			newImg.setAttribute("style","width: 98%;");
+            document.querySelector("#recipeImgLocation").appendChild(newImg);
+		}
+		
+		function createRating(){
+			let rating = Math.floor(currentRecipe['reviewRating']);
+			if(rating !=5){
+				for(let counter = 1; counter <= rating; counter++){
+					let total = 5 - rating;
+					if(counter <= rating){
+						document.querySelector("#recipeReview").innerHTML += '<img src="inc/icons/star-fill.svg" alt="rating">'
+					}
+					if(counter >= rating){
+						for(let counter = 1; counter <= total; counter++){
+							document.querySelector("#recipeReview").innerHTML += '<img src="inc/icons/star.svg" alt="rating">'
+						}
+					}
+				}
+			}else{
+				for(let counter = 1; counter <= rating; counter++){
+					document.querySelector("#recipeReview").innerHTML += '<img src="inc/icons/star-fill.svg" alt="rating">'
+				}
+			}
+			
+			
+			
+		}
+		
+		//Loading and Creating individual ingredients
+		function loadRecipeIngredients(){
+			let currentRecipeIng = currentRecipe["ingredients"];
+			for(let counter = 0; counter < Object.keys(currentRecipeIng).length; counter++){
+				let individualIngredient = currentRecipeIng[counter];
+				console.log(individualIngredient)
+				let newIngContainer = document.createElement("div");
+				newIngContainer.setAttribute("class","form-check pt-3");
+				//Create Check Box
+				let newIngCB = document.createElement("input");
+				newIngCB.setAttribute("class","form-check-input");
+				newIngCB.setAttribute("type","checkbox");
+				newIngCB.setAttribute("id",currentRecipeIng[counter]);
+				//Create Label
+				let newIngLabel = document.createElement("label");
+				newIngLabel.setAttribute("class","form-check-label");	
+				let ingLabelQuantity = document.createElement("span");
+				ingLabelQuantity.setAttribute("class","labelQuantity");
+				ingLabelQuantity.innerHTML = individualIngredient[0] + " ";
+				newIngLabel.innerHTML = individualIngredient[1];
+				newIngContainer.appendChild(ingLabelQuantity);
+				
+				//Connect Together
+				newIngContainer.appendChild(newIngCB);
+				newIngContainer.appendChild(newIngLabel);
+				document.querySelector("#ingredientsInputZone").appendChild(newIngContainer);
+			}
+			
+		}
+		
+		//Loading and Creating individual Directions
+		function loadRecipeDirections(){
+			let currentRecipeDir = currentRecipe["directions"];
+			//Create Unordered List
+			let newDirList= document.createElement("ul");
+			newDirList.setAttribute("class","list-group list-group-flush")
+			for(let counter = 0; counter < Object.keys(currentRecipeDir).length; counter++){
+				//Create List Item
+				let individualDircection = currentRecipeDir[counter];
+				let newDirItem= document.createElement("li");
+				newDirItem.setAttribute("class","list-group-item");
+				newDirItem.innerHTML = individualDircection;
+				//Connect Together
+				newDirList.appendChild(newDirItem);
+				
+			}
+			document.querySelector("#directionsInputZone").appendChild(newDirList);
+		}
+		
+		
+				
+		
+	</script>
+</head>
+
+<body>
+<div class="container-fluid p-2" style="background-color: #F2F2F2">
+</div>
+<div class="container-fluid p-5" style="background-color: #F2F2F2">
+</div>
+	
+	<!--- Navigation --->
+	<nav class="navbar navbar-expand-sm navbar-dark sticky-top" style="background-color: #FFFFFF; border-top: 1px solid #DAD8D6;">
+		<div class="container">
+			<div class="container-fluid">
+				<div class="row"  style="display: flex; align-items: baseline">
+					<div class="col-1">
+						<div style="display: flex; align-items: baseline" >
+							<img src="inc/icons/card-text.svg" alt="popUp">
+							<p style="padding: 0px 0px 0px 8px">Explore</p>
+						</div>
+					</div>
+					<div class="col" style="display: flex; align-items: baseline">
+						<div>
+							<a href="index.html" style=" text-decoration: none;"><h3 style="padding: 0px 0px 0px 12px; color: #D54215">SomeRecipes</h3></a>
+						</div>
+					</div>
+					<div class="col-3">
+						<a href="newRecipe.php" style=" text-decoration: none;">
+						<button type="button" class="btn btn" style="background-color: #D54215; color: #ffffff" id="button" name="button" >Create New Recipe</button>
+					</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Main Content-->
+<div class="container pt-3" style="border-left: 2px solid #D54215; border-right: 2px solid #D54215">
+	<div>
+		<div class="row">
+			<h1 id="recipeName"></h1>
+		</div>
+		<div class="row">
+			<p style="filter: invert(31%) sepia(97%) saturate(1093%) hue-rotate(347deg) brightness(90%) contrast(103%)">
+				<span id="recipeReview"></span>
+				
+			</p>
+		</div>
+		<div class="row">
+			<span id="recipeDescription"></span>
+		</div>
+		<div class="row">
+			<span id="recipeSubmitter"></span>
+		</div>
+		
+	</div>
+	
+	<div class="row">
+		<div class="col-5 pt-3 pb-3" style="background-color: #D54215; border-top-right-radius: 25px;border-bottom-right-radius: 25px;">
+			<span id="recipeImgLocation"></span>
+		</div>
+		<div class="col-1">
+		</div>
+		<div class="col-3 p-4" style="border: 2px solid #D9D9D9; border-radius: 10px; height: 50%">
+			<p><b>Preparation Time: </b><span id="preparationTime"></span></p>
+			<p><b>Cooking Time: </b><span id="cookingTime"></span></p>
+			<p><b>Serves: </b><span id="servingSize"></span></p>
+			
+		</div>
+		<div class="col-2">
+		</div>
+		 
+	</div>
+	<div style="display: flex; align-items:center">
+		<hr style="border-top: 3px solid #929191; width: 60%">
+		<img src="inc/icons/basket.svg" alt="Basket Img" style="width: 3%; padding-left: .5em; filter: invert(31%) sepia(97%) saturate(1093%) hue-rotate(347deg) brightness(90%) contrast(103%)">		
+	</div>
+	<div class="row">
+		<div class="col-7">
+			<div id="accordionIngredients">
+				<div class="card">
+					<a class="btn" data-bs-toggle="collapse" href="#collapseOne">
+						<div class="card-header" style="background-color: #FFFFFF; text-align: left;">
+							<h3>Ingredients</h3>
+						</div>
+					</a>
+					<div id="collapseOne" class="collapse show" data-bs-parent="#accordion">
+						<div class="card-body">
+							<span id="ingredientsInputZone"></span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+		<div class="col-3">
+		</div>	
+	</div>
+	<div style="display: flex; align-items:center">
+		<hr style="border-top: 3px solid #929191; width: 60%">
+		<img src="inc/icons/list-check.svg" alt="Basket Img" style="width: 3%; padding-left: .5em; filter: invert(31%) sepia(97%) saturate(1093%) hue-rotate(347deg) brightness(90%) contrast(103%)">		
+	</div>
+	<div class="row">
+		<div class="col-7">
+			<div id="accordionDirections">
+				<div class="card">
+					<a class="btn" data-bs-toggle="collapse" href="#collapseDirections">
+						<div class="card-header" style="background-color: #FFFFFF; text-align: left;">
+							<h3>Directions</h3>
+						</div>
+					</a>
+					<div id="collapseDirections" class="collapse show" data-bs-parent="#accordion">
+						<div class="card-body">
+							<span id="directionsInputZone"></span>
+						</div>
+					</div>
+				</div>
+			</div>			
+		</div>
+		<div class="col-3">
+		</div>	
+	</div>
+</div>
+<div class="container-fluid p-3" style="background-color: #FFFFFF"></div>
+	
+	
+	
+</body>
+	<footer>
+	<div class="container-fluid p-5" style="background-color: #F2F2F2"></div>
+	<div class="container-fluid p-2" style="background-color: #F2F2F2">
+</div>	
+	</footer>
+</html>

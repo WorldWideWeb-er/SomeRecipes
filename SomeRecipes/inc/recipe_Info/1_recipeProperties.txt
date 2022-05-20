@@ -1,0 +1,41 @@
+{
+"id":"1",
+"name":"Garlic Shrip Pasta Bake",
+"submitter":"Ed N Angela Latimer",
+"summary":"Want a super satisfying, quick and easy dinner? Then this buttery garlic shrimp pasta bake is definitely a family pleasing meal idea that you should try!",
+"reviewRating":"5",
+"imageInfo":{"image":"recipeImg","imageAlt":"Garlic Shrip Pasta Bake Img"},
+"serves":"6",
+"preparationTime":"20 minutes",
+"cooking":"25 minutes",
+"ingredients":{
+	"0":["1","teaspoon vegetable oil"],
+	"1":["1"," (10 ounce) package penne pasta"],
+	"2":["3"," tablespoons butter, divided"],
+	"3":["1"," tablespoon minced garlic"],
+	"4":["1"," poiund uncooked medium shrimp, peeled and deveined"],
+	"5":["3"," tablespoons chopped fresh parsley, divided"],
+	"6":["2"," teaspoons chopped fresh dill"],
+	"7":["2"," tablespoons all-purpose flour "],
+	"8":["1/2","cup chicken broth"],
+	"9":["1","cup milk"],
+	"10":["2","large tomatoes, chopped"],
+	"11":["1","tablespoon lemon juice"],
+	"12":["1","teaspoon salt"],
+	"13":["1","teaspoon ground black pepper"],
+	"14":["3/4","cup grated Parmesan cheese"],
+	"15":["1/2","cup grated Romano cheese"],
+	"16":["1/4","cup shredded mozzarella cheese"]
+	},
+"directions":{
+"0":"Heat cooking oil in 2 quart skillet",
+"1":"Saute onions and peppers for 5 minutes.",
+"2":"Add spices and stir for 30 seconds",
+"3":"Add meat and cook until browned. Approximately 15 minutes.",
+"4":"Pour contents of skillet into 3 quart crock pot.",
+"5":"Rinse beans and place in crockpot.",
+"6":"Open and pour Tomato puree and sauce into crock pot.",
+"7":"Cover crockpot and cook on low for 6 hours.",
+"8":"Serve into individual bowls and top with sour cream and cheese."
+	}
+}
